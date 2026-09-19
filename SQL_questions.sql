@@ -23,3 +23,11 @@ select c.customer_id, c.customer_name, count(o.order_id) AS order_count from cus
 inner join orders o
 on c.customer_id = o.customer_id
 group by c.customer_id, c.customer_name
+
+#5. Customers With No Orders
+Find customers who have never placed an order.
+
+select c.* from customers c
+left join orders o
+on c.customer_id = o.customer_id
+where order_id IS NULL

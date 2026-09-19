@@ -25,7 +25,7 @@ on c.customer_id = o.customer_id
 group by c.customer_id, c.customer_name
 
 #5. Customers With No Orders
-Find customers who have never placed an order.
+#Find customers who have never placed an order.
 
 select c.* from customers c
 left join orders o

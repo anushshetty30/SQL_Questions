@@ -15,3 +15,11 @@ where amount < (select max(amount) from orders)
 
 select order_id, amount from orders
 where amount > (select avg(amount) from orders)
+
+#4. Customer Order Count
+#Find the number of orders placed by each customer and display. Include only customers who have placed at least one order.
+
+select c.customer_id, c.customer_name, count(o.order_id) AS order_count from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, c.customer_name

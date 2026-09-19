@@ -1,4 +1,4 @@
-<!--1.Customers Above Average Age-->
+--1.Customers Above Average Age--
 #Find customers whose age is greater than the average age of all customers.
 
 select customer_name, age from customers

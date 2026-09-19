@@ -31,3 +31,13 @@ select c.* from customers c
 left join orders o
 on c.customer_id = o.customer_id
 where order_id IS NULL
+
+#6. Total Completed Sales Per Customer
+#Find each customers total completed sales.Sort from highest to lowest.
+
+select c.customer_name, sum(amount) as total_sales from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, c.customer_name
+order by total_sales desc

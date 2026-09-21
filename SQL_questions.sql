@@ -186,3 +186,26 @@ from orders
 select customer_id, order_id, order_date
 from customer_order
 where order_number = 1
+
+#20. Compare Customer Sales With Average Sales
+#Calculate each customer's total completed sales and the average sales across all customers.
+
+WITH customer_sales AS (
+    SELECT c.customer_id, c.customer_name,
+        SUM(o.amount) AS total_sales
+    FROM customers c
+    JOIN orders o
+        ON c.customer_id = o.customer_id
+    WHERE o.status = 'Completed'
+    GROUP BY
+        c.customer_id,
+        c.customer_name
+),
+avg_customersales as (
+select customer_id, customer_name, total_sales,
+round(avg(total_sales) over (),2) as avg_sales
+from customer_sales
+)
+select customer_id, customer_name, total_sales, avg_sales,
+round((total_sales - avg_sales),2) as compare_sales
+from avg_customersales

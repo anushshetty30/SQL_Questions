@@ -143,3 +143,46 @@ order by total_sales desc
 select customer_name, total_sales,
 rank() over (order by total_sales desc) as rank_sales
 from total_customersales
+
+#17. Top 3 Customers Using Ranking
+#Find customers whose sales rank is within the top 3.
+
+WITH customer_sales AS (
+    SELECT c.customer_id, c.customer_name,
+        SUM(o.amount) AS total_sales
+    FROM customers c
+    JOIN orders o
+        ON c.customer_id = o.customer_id
+    WHERE o.status = 'Completed'
+    GROUP BY
+        c.customer_id,
+        c.customer_name
+),
+ranked_customers AS (
+    SELECT customer_name, total_sales,
+        RANK() OVER (ORDER BY total_sales DESC) AS sales_rank
+    FROM customer_sales
+)
+SELECT customer_name, total_sales, sales_rank
+FROM ranked_customers
+WHERE sales_rank <= 3
+ORDER BY sales_rank;
+
+#18. Customer Order Ranking
+#For each customer, assign a sequential number to their orders based on order_date, with the earliest order getting 1.
+
+select customer_id, order_id, order_date, 
+row_number () over (partition by customer_id order by order_date) as order_number
+from orders
+
+#19. First Order of Each Customer
+#Find the first order placed by each customer.
+    
+with customer_order as (
+select customer_id, order_id, order_date, 
+row_number () over (partition by customer_id order by order_date) as order_number
+from orders
+)
+select customer_id, order_id, order_date
+from customer_order
+where order_number = 1

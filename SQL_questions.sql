@@ -99,7 +99,7 @@ where status = 'completed'
 group by date_format(order_date,'%Y-%m')
 
 #13. Highest Sales Month
-Find the month with the highest total completed sales.#
+#Find the month with the highest total completed sales.
 
 select date_format(order_date,'%Y-%m') as month_date, sum(amount) as total_sales from orders
 where status = 'completed'

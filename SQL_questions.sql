@@ -106,3 +106,40 @@ where status = 'completed'
 group by date_format(order_date,'%Y-%m')
 order by total_sales desc
 limit 1
+
+#14. Customers With Multiple Orders
+#Find customers who have placed more than one order.
+
+SELECT
+    c.customer_name,
+    COUNT(o.order_id) AS order_count
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+GROUP BY
+    c.customer_id,
+    c.customer_name
+HAVING COUNT(o.order_id) > 1;
+
+#15. Cancelled Order Percentage
+#Calculate the percentage of orders that were cancelled.
+
+SELECT 
+    concat(round(SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) * 100 / COUNT(*),2),'%') AS cancelled_percentage
+FROM orders;
+
+#16. Rank Customers by Sales
+#Calculate each customer's total completed sales and assign a rank based on sales.
+
+With total_customersales AS (
+select c.customer_id, c.customer_name, sum(amount) as total_sales from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, c.customer_name
+order by total_sales desc
+)
+
+select customer_name, total_sales,
+rank() over (order by total_sales desc) as rank_sales
+from total_customersales

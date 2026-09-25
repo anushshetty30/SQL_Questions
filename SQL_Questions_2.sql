@@ -22,3 +22,18 @@ from orders
 where status = 'completed'
 group by customer_id
 ) as customer_sales
+
+
+#3. Customers Above Average Spending
+#Find customers whose total completed sales are greater than the average total sales across all customers.
+
+with total_completedsales as (
+select c.customer_id, customer_name, sum(amount) as total_sales from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, customer_name
+)
+select customer_name, total_sales
+from total_completedsales
+where total_sales > (select avg(total_sales) from total_completedsales)

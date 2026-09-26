@@ -37,3 +37,23 @@ group by c.customer_id, customer_name
 select customer_name, total_sales
 from total_completedsales
 where total_sales > (select avg(total_sales) from total_completedsales)
+
+#4. Highest Order for Each Customer
+#Find the highest-value order placed by each customer.
+
+select customer_name, max(amount) as highest_amount
+from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, customer_name
+
+OR
+  
+with highest_sales as(
+select c.customer_id, customer_name, amount, rank () over (partition by c.customer_id order by amount desc) as customer_rank
+from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+)
+select customer_name, amount from highest_sales
+where customer_rank = 1

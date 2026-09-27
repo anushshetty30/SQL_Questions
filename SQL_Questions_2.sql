@@ -67,3 +67,13 @@ inner join orders o
 on c.customer_id = o.customer_id
 WHERE status = 'cancelled'
 group by c.customer_id, customer_name
+
+#5. Customers With Cancelled Orders
+#Find customers who have placed at least one cancelled order.
+
+select customer_name, COUNT(ORDER_ID)
+from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+WHERE status = 'cancelled'
+group by c.customer_id, customer_name

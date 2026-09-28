@@ -77,3 +77,18 @@ inner join orders o
 on c.customer_id = o.customer_id
 WHERE status = 'cancelled'
 group by c.customer_id, customer_name
+
+#6. Customers With Only Completed Orders
+#Find customers who have orders but never had a cancelled order.
+  
+SELECT 
+    c.customer_name,
+    COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.customer_name
+HAVING SUM(CASE 
+				WHEN o.status = 'Cancelled' THEN 1 
+                ELSE 0 
+                END) = 0;

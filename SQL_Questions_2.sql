@@ -92,3 +92,6 @@ HAVING SUM(CASE
 				WHEN o.status = 'Cancelled' THEN 1 
                 ELSE 0 
                 END) = 0;
+
+#7. Cancellation Rate by Customer
+#Calculate the cancellation percentage for each customer.

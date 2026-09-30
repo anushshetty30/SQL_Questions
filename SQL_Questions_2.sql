@@ -95,3 +95,14 @@ HAVING SUM(CASE
 
 #7. Cancellation Rate by Customer
 #Calculate the cancellation percentage for each customer.
+
+SELECT c.customer_name, COUNT(o.order_id) AS total_orders,
+sum(case when o.status = 'cancelled' then 1 
+		else 0 
+        end) as cancelled_orders,
+    concat(round((sum(case when o.status = 'cancelled' then 1 
+		else 0 
+        end) / COUNT(o.order_id)) * 100,2),'%') as cancelled_orders_perc
+FROM customers c JOIN orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.customer_id, c.customer_name

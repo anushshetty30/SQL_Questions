@@ -106,3 +106,17 @@ sum(case when o.status = 'cancelled' then 1
 FROM customers c JOIN orders o
 ON c.customer_id = o.customer_id
 GROUP BY c.customer_id, c.customer_name
+
+
+#8. Cancellation Rate by Month
+#Calculate the monthly cancellation percentage.
+
+SELECT 
+    date_format(order_date,'%Y-%m') as month_date,
+    COUNT(o.order_id) AS total_orders,
+    SUM(CASE WHEN o.status = 'Cancelled' THEN 1 ELSE 0 END) AS cancelled_orders,
+        concat(ROUND(
+        SUM(CASE WHEN o.status = 'Cancelled' THEN 1 ELSE 0 END)
+        * 100.0 / COUNT(o.order_id),2),'%') AS cancellation_percentage
+FROM orders o
+group by month_date

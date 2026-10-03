@@ -151,3 +151,12 @@ ranked_sales AS (
 SELECT city, total_sales
 FROM ranked_sales
 WHERE sales_rank = 1;
+
+#10. Average Order Value by City
+#Calculate the average completed order value for each city.
+
+select city, avg(amount) as total_sales
+from customers c inner join orders o
+on c.customer_id = o.customer_id
+where status = 'Completed'
+group by city	

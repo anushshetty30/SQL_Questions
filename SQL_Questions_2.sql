@@ -120,3 +120,34 @@ SELECT
         * 100.0 / COUNT(o.order_id),2),'%') AS cancellation_percentage
 FROM orders o
 group by month_date
+
+
+#9. Highest-Selling City
+#Find the city with the highest total completed sales.
+
+SELECT c.city, SUM(o.amount) AS total_sales
+FROM customers c
+JOIN orders o
+    ON c.customer_id = o.customer_id
+WHERE o.status = 'Completed'
+GROUP BY c.city
+ORDER BY total_sales DESC
+LIMIT 1;
+
+	OR
+
+WITH city_sales AS (
+    SELECT city, SUM(amount) AS total_sales
+    FROM customers c
+    INNER JOIN orders o
+        ON c.customer_id = o.customer_id
+    WHERE status = 'Completed'
+    GROUP BY city
+),
+ranked_sales AS (
+    SELECT *, RANK() OVER (ORDER BY total_sales DESC) AS sales_rank
+    FROM city_sales
+)
+SELECT city, total_sales
+FROM ranked_sales
+WHERE sales_rank = 1;

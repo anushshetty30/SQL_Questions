@@ -176,3 +176,17 @@ select customer_name, city, total_sales,
 rank () over (partition by city order by  total_sales desc) as city_rank
 from city_sales
 order by city, city_rank
+
+
+#12. Running Total of Sales
+#Calculate the running total of completed sales by order date.
+
+with date_sales as (
+select order_date, sum(amount) as total_sales
+from orders
+where status = 'completed'
+group by order_date
+)
+select order_date, total_sales,
+sum(total_sales) over(order by order_date) as daily_sales
+from date_sales

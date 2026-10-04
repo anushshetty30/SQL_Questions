@@ -160,3 +160,19 @@ from customers c inner join orders o
 on c.customer_id = o.customer_id
 where status = 'Completed'
 group by city	
+
+#11. Rank Customers Within Their City
+#Calculate each customer's total completed sales and rank customers within their city
+
+with city_sales as (
+    SELECT c.customer_id, c.customer_name, c.city, SUM(o.amount) AS total_sales
+    FROM customers c
+    JOIN orders o
+	ON c.customer_id = o.customer_id
+    WHERE o.status = 'Completed'
+    GROUP BY c.customer_id, c.customer_name, c.city
+)
+select customer_name, city, total_sales,
+rank () over (partition by city order by  total_sales desc) as city_rank
+from city_sales
+order by city, city_rank

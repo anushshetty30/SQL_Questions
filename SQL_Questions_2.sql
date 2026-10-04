@@ -190,3 +190,10 @@ group by order_date
 select order_date, total_sales,
 sum(total_sales) over(order by order_date) as daily_sales
 from date_sales
+
+#13. Previous Order Amount
+#For each order, display the previous order amount based on order date.
+
+select order_id, order_date, amount,
+lag (amount) over (order by order_date)
+from orders

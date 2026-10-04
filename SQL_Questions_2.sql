@@ -197,3 +197,12 @@ from date_sales
 select order_id, order_date, amount,
 lag (amount) over (order by order_date)
 from orders
+
+#14. Difference From Previous Order
+#For each order, calculate the difference between the current order amount and the previous order amount.
+
+select order_id, amount,
+lag (amount) over (order by order_date) as previous_amount,
+abs(amount - lag (amount) over (order by order_date)) as difference
+from orders
+order by order_date

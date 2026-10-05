@@ -206,3 +206,25 @@ lag (amount) over (order by order_date) as previous_amount,
 abs(amount - lag (amount) over (order by order_date)) as difference
 from orders
 order by order_date
+
+#15. First and Last Order Date
+#For each customer, find:
+#First order date
+#Last order date
+
+select customer_name, 
+min(order_date) as first_order_date , 
+min(order_date) as last_order_date
+FROM customers c 
+JOIN orders o
+    ON c.customer_id = o.customer_id
+    group by c.customer_id, customer_name
+
+OR
+
+SELECT distinct c.customer_id, c.customer_name,
+    MIN(o.order_date) OVER (PARTITION BY c.customer_id) AS first_order_date,
+    MAX(o.order_date) OVER (PARTITION BY c.customer_id) AS last_order_date
+FROM orders o
+JOIN customers c
+ON o.customer_id = c.customer_id;

@@ -228,3 +228,15 @@ SELECT distinct c.customer_id, c.customer_name,
 FROM orders o
 JOIN customers c
 ON o.customer_id = c.customer_id;
+
+#16. Customer Lifetime
+#Calculate the number of days between a customer's first and last order.
+
+select customer_name, 
+min(order_date) as first_order_date , 
+max(order_date) as last_order_date,
+datediff(max(order_date), min(order_date)) as customer_lifetime_days
+FROM customers c 
+JOIN orders o
+    ON c.customer_id = o.customer_id
+    group by c.customer_id, customer_name

@@ -251,8 +251,8 @@ where status = 'completed'
 group by c.customer_id, c.customer_name
 having count(o.order_id) >= 2
 
-18.Monthly Sales Growth
-Calculate total completed sales by month and compare each month with the previous month's sales.
+#18.Monthly Sales Growth
+#Calculate total completed sales by month and compare each month with the previous month's sales.
 
 with current_sales as (
 select date_format(order_date, '%Y-%m') as month_date , sum(amount) as total_sales
@@ -268,3 +268,24 @@ select month_date, total_sales, previous_month_sales,
 coalesce(total_sales - previous_month_sales,0) as sales_growth
 from previous_sales
 order by month_date
+
+
+#19. Top 2 Customers Per City
+#Find the top 2 customers in each city based on completed sales.
+
+with total_customer_sales as (
+select c.customer_id, customer_name, city, sum(amount) as total_sales
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, customer_name, city
+),
+ranked_sales as (
+select customer_name, city, total_sales,
+rank() over (partition by city order by total_sales desc) as rank_customers
+from total_customer_sales
+)
+select customer_name, city, total_sales, rank_customers
+from ranked_sales
+where rank_customers <= 2
+order by city, rank_customers

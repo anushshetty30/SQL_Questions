@@ -250,3 +250,21 @@ on c. customer_id = o.customer_id
 where status = 'completed'
 group by c.customer_id, c.customer_name
 having count(o.order_id) >= 2
+
+18.Monthly Sales Growth
+Calculate total completed sales by month and compare each month with the previous month's sales.
+
+with current_sales as (
+select date_format(order_date, '%Y-%m') as month_date , sum(amount) as total_sales
+from orders o
+where status = 'completed'
+group by month_date
+),
+previous_sales as (
+select month_date, total_sales, lag(total_sales) over (order by month_date) as previous_month_sales
+from current_sales
+)
+select month_date, total_sales, previous_month_sales,
+coalesce(total_sales - previous_month_sales,0) as sales_growth
+from previous_sales
+order by month_date

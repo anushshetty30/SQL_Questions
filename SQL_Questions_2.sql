@@ -289,3 +289,22 @@ select customer_name, city, total_sales, rank_customers
 from ranked_sales
 where rank_customers <= 2
 order by city, rank_customers
+
+#20. Customer Segmentation
+#Classify customers based on their total completed sales:
+#Total Sales	Segment
+#>= ₹10,000	    High Value
+#₹5,000–₹9,999	Medium Value
+#< ₹5,000	    Low Value
+
+select customer_name, sum(amount) as total_sales,
+case
+	when sum(amount) >= 10000 then 'High Value'
+    when sum(amount) >= 5000 then 'Medium Value'
+	else 'Low Value'
+End as customer_segment
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, customer_name
+

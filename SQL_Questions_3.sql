@@ -23,3 +23,11 @@ where status = 'completed'
 group by c.customer_id, customer_name
 having average_order_value > (select avg(amount) from orders o
 							  where status = 'completed')
+
+
+#3. Sales by Order Status
+#For each order status, calculate the number of orders, total order amount, and average order amount.
+
+select status, count(order_id) as order_count, sum(amount) as total_amount, avg(amount) as average_amount
+from orders
+group by status

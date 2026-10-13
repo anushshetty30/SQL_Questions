@@ -31,3 +31,13 @@ having average_order_value > (select avg(amount) from orders o
 select status, count(order_id) as order_count, sum(amount) as total_amount, avg(amount) as average_amount
 from orders
 group by status
+
+#4. City Performance Comparison
+#Calculate the number of customers, completed orders, and completed sales for each city. Include only cities with completed sales greater than ₹10,000.
+
+select city, count(distinct c.customer_id) as customer_count, count(o.order_id) as completed_orders, sum(amount) as total_sales
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by city
+having total_sales > 10000

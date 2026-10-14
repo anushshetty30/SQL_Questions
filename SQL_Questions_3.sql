@@ -65,3 +65,15 @@ FROM customers c LEFT JOIN orders o
 ON c.customer_id = o.customer_id
 and o.status = 'Completed'
 where o.customer_id is null
+
+#6. First-Time vs Repeat Customers
+#Classify customers as One-Time if they have exactly one completed order and Repeat if they have more than one. Exclude customers with no completed orders.
+
+select customer_name, count(o.order_id) as completed_orders,
+case when count(o.order_id) = 1 then 'One-Time'
+	 when count(o.order_id) > 1 then 'Repeat'
+End As customer_type
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, customer_name

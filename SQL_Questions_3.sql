@@ -41,3 +41,27 @@ on c.customer_id = o.customer_id
 where status = 'completed'
 group by city
 having total_sales > 10000
+
+#5. Customers With No Completed Orders
+#Find customers who have never placed a completed order, even if they have cancelled orders.
+
+SELECT 
+    c.customer_id,
+    c.customer_name
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+      AND o.status = 'Completed'
+);
+
+	OR
+	
+SELECT 
+    c.customer_id,
+    c.customer_name
+FROM customers c LEFT JOIN orders o
+ON c.customer_id = o.customer_id
+and o.status = 'Completed'
+where o.customer_id is null

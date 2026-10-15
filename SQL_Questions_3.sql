@@ -78,8 +78,8 @@ on c.customer_id = o.customer_id
 where status = 'completed'
 group by c.customer_id, customer_name
 
-7. Latest Order for Each Customer
-Retrieve each customer's most recent order, including its order ID, date, amount, and status. Return only one row per customer who has placed an order.
+#7. Latest Order for Each Customer
+#Retrieve each customer's most recent order, including its order ID, date, amount, and status. Return only one row per customer who has placed an order.
 
 with ranked_order as (
 select customer_name,order_id, order_date, amount,status,

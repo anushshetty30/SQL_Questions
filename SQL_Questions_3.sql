@@ -90,3 +90,16 @@ on c.customer_id = o.customer_id
 select customer_name,order_id, order_date, amount,status
 from ranked_order
 where customer_rank = 1
+
+#8. Days Between Customer Orders
+#For every order, calculate the number of days since that customer's previous order.
+
+with customer_previous as (
+select customer_name, o.order_id, order_date, 
+lag(order_date) over (Partition by c.customer_id order by order_date) as previous_order
+from customers c join orders o 
+on c.customer_id = o.customer_id
+)
+select customer_name, order_id, order_date, previous_order,
+datediff(order_date, previous_order) as days_between_orders
+from customer_previous

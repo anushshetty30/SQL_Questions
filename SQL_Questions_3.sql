@@ -120,3 +120,12 @@ from highest_customer
 select city, customer_name, total_sales
 from ranked_customers
 where customer_rank = 1
+
+10. Customer Purchase Recency
+Calculate how many days have passed between each customer's most recent order date and the fixed analysis date 2025-06-01. Include customers who have placed at least one order.
+
+select customer_name, max(order_date) as last_order_date,
+datediff ('2025-06-01', max(order_date)) as days_since_last_order
+from customers c join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, customer_name

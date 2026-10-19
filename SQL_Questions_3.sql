@@ -103,3 +103,20 @@ on c.customer_id = o.customer_id
 select customer_name, order_id, order_date, previous_order,
 datediff(order_date, previous_order) as days_between_orders
 from customer_previous
+
+with highest_customer as (
+select customer_name, city,
+sum(amount) as total_sales
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, customer_name, city
+),
+ranked_customers as (
+select customer_name, city, total_sales, 
+rank () over (partition by city order by total_sales desc) as customer_rank
+from highest_customer
+)
+select city, customer_name, total_sales
+from ranked_customers
+where customer_rank = 1

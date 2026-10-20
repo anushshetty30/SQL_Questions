@@ -150,3 +150,16 @@ from monthly_sales
 select month_date, total_sales, previous_month_sales,
 concat(round(coalesce ((previous_month_sales / total_sales) * 100,0),2),'%') as growth_percentage
 from previous_sales
+
+#12. Cumulative Monthly Sales
+#Calculate total completed sales per month and the cumulative sales from the first month through each month.
+
+with total_sales as (
+select date_format (order_date, '%Y-%m') as month_date, sum(amount) as monthly_sales
+from orders
+where status = 'completed'
+group by month_date
+)
+select month_date, monthly_sales,
+sum(monthly_sales) over (order by month_date) as cumulative_sales
+from total_sales

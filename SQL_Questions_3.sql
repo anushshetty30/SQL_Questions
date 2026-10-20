@@ -129,3 +129,21 @@ datediff ('2025-06-01', max(order_date)) as days_since_last_order
 from customers c join orders o
 on c.customer_id = o.customer_id
 group by c.customer_id, customer_name
+
+#11. Month-over-Month Sales Growth Percentage
+#Calculate monthly completed sales, previous month's sales, and percentage growth compared with the previous available month.
+
+with monthly_sales as (
+select date_format (order_date, '%Y-%m') as month_date, sum(amount) as total_sales
+from orders
+where status = 'completed'
+group by month_date
+),
+previous_sales as (
+select month_date, total_sales,
+lag (total_sales) over (order by month_date) as previous_month_sales
+from monthly_sales
+)
+select month_date, total_sales, previous_month_sales,
+concat(round(coalesce ((previous_month_sales / total_sales) * 100,0),2),'%') as growth_percentage
+from previous_sales

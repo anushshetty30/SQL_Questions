@@ -182,3 +182,16 @@ select month_date, order_date, daily_sales
 from order_rank
 where sales_rank = 1
 order by month_date
+
+#14. Sales Above the Monthly Average
+##Find completed orders whose amounts are greater than the average completed order amount for their respective month.
+
+with avg_amount as (
+select order_id, order_date, amount,
+avg(amount) over (partition by date_format (order_date, '%Y-%m')) as monthly_average
+from orders
+where status = 'completed'
+)
+select order_id, order_date, amount, monthly_average
+from avg_amount
+where amount > monthly_average

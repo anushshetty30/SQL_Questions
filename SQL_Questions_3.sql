@@ -163,3 +163,22 @@ group by month_date
 select month_date, monthly_sales,
 sum(monthly_sales) over (order by month_date) as cumulative_sales
 from total_sales
+
+#13. Highest Sales Day in Each Month
+#Find the date with the highest completed sales for each month. Include all dates tied for the highest daily sales.
+
+with total_sales as (
+select date_format (order_date, '%Y-%m') as month_date, order_date, sum(amount) as daily_sales
+from orders
+where status = 'completed'
+group by month_date, order_date
+),
+order_rank as (
+select month_date, order_date, daily_sales,
+rank() over (partition by month_date order by daily_sales desc) as sales_rank
+from total_sales
+)
+select month_date, order_date, daily_sales
+from order_rank
+where sales_rank = 1
+order by month_date

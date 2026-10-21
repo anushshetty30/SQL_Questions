@@ -195,3 +195,26 @@ where status = 'completed'
 select order_id, order_date, amount, monthly_average
 from avg_amount
 where amount > monthly_average
+
+#15. Best and Worst Sales Months
+#Find the month with the highest completed sales and the month with the lowest completed sales, considering only months containing completed orders.
+
+with date_sales as (
+select date_format (order_date, '%Y-%m') as month_date, sum(amount) as total_sales
+from orders
+where status = 'completed'
+group by month_date
+),
+customer_rank as (
+select month_date, total_sales,
+rank() over (order by total_sales desc) as best_rank,
+rank() over (order by total_sales asc) as worst_rank
+from date_sales
+)
+select month_date, total_sales,
+Case 
+	when best_rank = 1 then 'Best Sales'
+    when worst_rank = 1 then 'Worst Sales'
+End as sales_rank
+from customer_rank
+where best_rank = 1 OR worst_rank = 1

@@ -228,3 +228,15 @@ min(price) as minimum_price,
 max(price) as maximum_price
 from products
 group by category
+
+#17. Products Priced Above Their Category Average
+#Find products whose price is greater than the average price of products in their own category.
+
+WITH product_analysis AS (
+select product_name, category, price,
+avg(price) over (partition by category) as category_average_price
+from products
+)
+select product_name, category, price, category_average_price
+from product_analysis
+where price > category_average_price

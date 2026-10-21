@@ -218,3 +218,13 @@ Case
 End as sales_rank
 from customer_rank
 where best_rank = 1 OR worst_rank = 1
+
+#16. Product Category Analysis
+#Using the products table, calculate the number of products, average product price, minimum price, and maximum price in each category.
+
+select category, count(product_id) as product_count,
+avg(price) as average_price,
+min(price) as minimum_price,
+max(price) as maximum_price
+from products
+group by category

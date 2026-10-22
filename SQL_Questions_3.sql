@@ -257,3 +257,15 @@ from customers c left join orders o
 on c.customer_id = o.customer_id
 AND status = 'completed'
 group by c.customer_id, customer_name
+
+#19. Cancelled Order Impact
+#Calculate the total value of all orders, the value of cancelled orders, and the percentage of total order value associated with cancelled orders
+
+select sum(amount) as total_order_value,
+sum(case when status = 'cancelled' then amount
+	 else 0 
+     end) as cancelled_order_value,
+round(sum(case when status = 'cancelled' then amount
+	 else 0 
+     end) * 100 / sum(amount),2) as cancelled_value_percentage
+    from orders 

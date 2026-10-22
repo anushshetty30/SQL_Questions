@@ -269,3 +269,28 @@ round(sum(case when status = 'cancelled' then amount
 	 else 0 
      end) * 100 / sum(amount),2) as cancelled_value_percentage
     from orders 
+
+#20. Customer Activity Dashboard KPI
+#Create a single-row summary showing:
+#- Total number of customers
+#- Number of customers with at least one completed order
+#- Total completed orders
+#- Total completed sales
+#- Average completed order value
+#- Percentage of orders that were cancelled
+
+select count(DISTINCT c.customer_id) as total_customers,
+count(distinct
+	  case when status = 'Completed' then c.customer_id
+      End) as active_customers,
+count(case when status = 'Completed' then o.order_id
+      end) as completed_orders,
+sum(case when status = 'Completed' then amount
+    else 0
+	end) as completed_sales,
+avg(case when status = 'Completed' then amount
+    end) as average_order_value,
+round(count(case when status = 'cancelled' then o.order_id
+      end) * 100 / nullif(count(o.order_id),0),2) as cancellation_percentage
+from customers c left join orders o
+on c.customer_id = o.customer_id

@@ -240,3 +240,20 @@ from products
 select product_name, category, price, category_average_price
 from product_analysis
 where price > category_average_price
+
+#18. Customer Revenue Segmentation
+#Calculate each customer's completed sales and classify them into these groups:
+- High Value: ₹10,000 or more
+- Medium Value: ₹5,000 to below ₹10,000
+- Low Value: below ₹5,000
+#Include customers with zero completed sales.
+
+select customer_name, coalesce(SUM(o.amount),0) AS total_sales,
+case when coalesce(sum(amount),0) > 10000 then 'High Value'
+	 when coalesce(sum(amount),0) >= 5000 then 'Medium Value'
+     when coalesce(sum(amount),0) < 5000 then 'Low Value'
+End as customer_segment
+from customers c left join orders o
+on c.customer_id = o.customer_id
+AND status = 'completed'
+group by c.customer_id, customer_name

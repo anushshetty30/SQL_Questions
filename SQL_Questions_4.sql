@@ -17,3 +17,20 @@ sum(case when status = 'completed' then amount
 from customers c left join orders o
 on c.customer_id = o.customer_id
 group by c.customer_id, customer_name
+
+#2. Customers With More Completed Than Cancelled Orders
+#Find customers who have more completed orders than cancelled orders.
+
+with customers_orders as (
+select customer_name, 
+count(case when status = 'completed' then o.order_id
+	  end) as completed_orders,
+count(case when status = 'cancelled' then o.order_id
+	  end) as cancelled_orders
+from customers c join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, customer_name
+)
+select customer_name, completed_orders, cancelled_orders
+from customers_orders
+where completed_orders > cancelled_orders

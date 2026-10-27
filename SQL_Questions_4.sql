@@ -34,3 +34,19 @@ group by c.customer_id, customer_name
 select customer_name, completed_orders, cancelled_orders
 from customers_orders
 where completed_orders > cancelled_orders
+
+#3. Customer's Largest Completed Order
+#Find the largest completed order placed by each customer.
+#If a customer has multiple orders with the same highest amount, include all tied orders.
+
+with customer_order as (
+select customer_name, order_id, order_date, amount,
+rank() over (partition by c.customer_id order by amount desc) as customer_rank
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+)
+select customer_name, order_id, order_date, amount
+from customer_order
+where customer_rank = 1
+

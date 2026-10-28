@@ -50,3 +50,26 @@ select customer_name, order_id, order_date, amount
 from customer_order
 where customer_rank = 1
 
+4. Customers Who Increased Their Spending
+Find customers whose second completed order amount was greater than their first completed order amount.
+
+WITH customer_spend AS (
+    SELECT customer_name, amount,
+        ROW_NUMBER() OVER (PARTITION BY c.customer_id ORDER BY order_date) AS customer_rank
+    FROM customers c JOIN orders o 
+	ON c.customer_id = o.customer_id
+    WHERE status = 'completed'
+)
+SELECT 
+    customer_name,
+    MAX(CASE WHEN customer_rank = 1 THEN amount
+    END) AS first_order_amount,
+    MAX(CASE WHEN customer_rank = 2 THEN amount
+    END) AS second_order_amount
+FROM customer_spend
+GROUP BY customer_name
+HAVING MAX(CASE WHEN customer_rank = 2 THEN amount
+           END)
+     >
+       MAX(CASE WHEN customer_rank = 1 THEN amount
+           END);

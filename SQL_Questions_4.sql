@@ -73,3 +73,17 @@ HAVING MAX(CASE WHEN customer_rank = 2 THEN amount
      >
        MAX(CASE WHEN customer_rank = 1 THEN amount
            END);
+
+#5. Customers With Consecutive Orders
+#Find customers who placed two orders within 30 days of each other.
+
+with customers_orders as (
+select customer_name, order_id, order_date,
+lag(order_date) over (partition by c.customer_id order by order_date) as previous_order_date
+from customers c join orders o
+on c.customer_id = o.customer_id
+)
+select customer_name, order_id, order_date, previous_order_date,
+datediff(order_date, previous_order_date) as days_between_orders
+from customers_orders
+where datediff(order_date, previous_order_date) <= 30

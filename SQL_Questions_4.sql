@@ -50,8 +50,8 @@ select customer_name, order_id, order_date, amount
 from customer_order
 where customer_rank = 1
 
-4. Customers Who Increased Their Spending
-Find customers whose second completed order amount was greater than their first completed order amount.
+#4. Customers Who Increased Their Spending
+#Find customers whose second completed order amount was greater than their first completed order amount.
 
 WITH customer_spend AS (
     SELECT customer_name, amount,

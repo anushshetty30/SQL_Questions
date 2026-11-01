@@ -99,3 +99,17 @@ on c.customer_id = o.customer_id
 where order_date = (select MAX(order_date) from orders o 
 					where status = 'completed')
 AND status = 'completed'
+
+#7. Top 3 Orders by Month
+#Find the top 3 highest-value completed orders for each month.
+
+with highest_sales as (
+select date_format(order_date, '%Y-%m') as month_date, order_id, c.customer_name, amount,
+row_number() over (partition by date_format(order_date, '%Y-%m') order by amount desc) as monthly_rank
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+)
+select month_date, order_id, customer_name, amount, monthly_rank
+from highest_sales
+where monthly_rank <= 3

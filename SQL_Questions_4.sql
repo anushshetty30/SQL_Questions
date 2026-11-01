@@ -113,3 +113,21 @@ where status = 'completed'
 select month_date, order_id, customer_name, amount, monthly_rank
 from highest_sales
 where monthly_rank <= 3
+
+#8. Customer Sales Rank
+#Calculate each customer's total completed sales and assign a rank from highest to lowest.
+#Include customers with zero completed sales.
+
+with customer_sales as (
+select customer_name, 
+coalesce(sum(case when status = 'completed' then amount
+	else 0
+    end),0) as total_sales
+from customers c left join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, customer_name
+)
+select customer_name, total_sales,
+rank() over (order by total_sales desc) as sales_rank
+from customer_sales
+order by total_sales desc

@@ -131,3 +131,24 @@ select customer_name, total_sales,
 rank() over (order by total_sales desc) as sales_rank
 from customer_sales
 order by total_sales desc
+
+#9. Customers With Sales Above Their City Average
+#Find customers whose total completed sales are greater than the average completed sales of customers in their city.
+
+with customer_sales as (
+select customer_name, city, 
+sum(case when status = 'completed' then amount
+	else 0
+    end) as total_sales
+from customers c left join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, customer_name, city
+),
+city_sales as (
+select customer_name, city, total_sales, 
+avg(total_sales) over (Partition by city) as city_average_sales
+from customer_sales
+)
+select customer_name, city, total_sales, city_average_sales
+from city_sales
+where total_sales > city_average_sales

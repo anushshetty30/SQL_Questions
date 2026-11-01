@@ -87,3 +87,15 @@ select customer_name, order_id, order_date, previous_order_date,
 datediff(order_date, previous_order_date) as days_between_orders
 from customers_orders
 where datediff(order_date, previous_order_date) <= 30
+
+#6. Most Recent Completed Order
+#Find the most recent completed order in the entire dataset.
+#Output:
+#order_id | customer_name | order_date | amount
+
+select order_id, customer_name, order_date, amount
+from customers c join orders o 
+on c.customer_id = o.customer_id
+where order_date = (select MAX(order_date) from orders o 
+					where status = 'completed')
+AND status = 'completed'

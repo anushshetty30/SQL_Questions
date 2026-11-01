@@ -152,3 +152,20 @@ from customer_sales
 select customer_name, city, total_sales, city_average_sales
 from city_sales
 where total_sales > city_average_sales
+
+#10. City With the Highest Average Customer Spending
+#Calculate the average completed sales per customer for each city and return the city with the highest average.
+
+with customer_sales as (
+select customer_name, city, sum(case when status = 'completed' then amount
+			else 0
+			end) as total_sales
+from customers c left join orders o
+on c.customer_id = o.customer_id
+group by c.customer_id, customer_name, city
+)
+select city, avg(total_sales) as average_customer_sales
+from customer_sales
+group by city
+order by average_customer_sales desc
+limit 1

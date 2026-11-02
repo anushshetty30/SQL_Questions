@@ -212,4 +212,4 @@ from month_orders
 )
 select month_date, monthly_sales, 
 concat(round((monthly_sales * 100 / total_sales),2),'%') as revenue_percentage
-from total_completed_salesv
+from total_completed_sales

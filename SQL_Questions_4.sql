@@ -178,3 +178,19 @@ lag(count(order_id)) over(order by date_format(order_date, '%Y-%m')) as previous
 from orders
 where status = 'completed'
 group by date_format(order_date, '%Y-%m')
+
+#12. Monthly Order Growth Percentage
+#Calculate the month-over-month percentage change in the number of completed orders.
+#Output:
+#month_date | completed_orders | previous_month_orders | growth_percentage
+
+with month_orders as (
+select date_format(order_date, '%Y-%m') as month_date, count(order_id) as completed_orders,
+lag(count(order_id)) over(order by date_format(order_date, '%Y-%m')) as previous_month_orders
+from orders
+where status = 'completed'
+group by date_format(order_date, '%Y-%m')
+)
+select month_date, completed_orders, previous_month_orders,
+round((completed_orders - previous_month_orders) * 100 / nullif(previous_month_orders,0),2) as growth_percentage
+from month_orders

@@ -169,3 +169,12 @@ from customer_sales
 group by city
 order by average_customer_sales desc
 limit 1
+
+#11. Monthly Order Count Comparison
+#For each month, calculate the number of completed orders and the previous month's completed order count.
+
+select date_format(order_date, '%Y-%m') as month_date, count(order_id) as completed_orders,
+lag(count(order_id)) over(order by date_format(order_date, '%Y-%m')) as previous_month_orders
+from orders
+where status = 'completed'
+group by date_format(order_date, '%Y-%m')

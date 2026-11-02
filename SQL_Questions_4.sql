@@ -194,3 +194,22 @@ group by date_format(order_date, '%Y-%m')
 select month_date, completed_orders, previous_month_orders,
 round((completed_orders - previous_month_orders) * 100 / nullif(previous_month_orders,0),2) as growth_percentage
 from month_orders
+
+#13. Revenue Contribution by Month
+#Calculate each month's completed sales and its percentage contribution to total completed sales.
+#Output:
+#month_date | monthly_sales | revenue_percentage
+
+with month_orders as (
+select date_format(order_date, '%Y-%m') as month_date, sum(amount) as monthly_sales
+from orders
+where status = 'completed'
+group by date_format(order_date, '%Y-%m')
+),
+total_completed_sales as (
+select month_date, monthly_sales, sum(monthly_sales) over () as total_sales
+from month_orders
+)
+select month_date, monthly_sales, 
+concat(round((monthly_sales * 100 / total_sales),2),'%') as revenue_percentage
+from total_completed_salesv

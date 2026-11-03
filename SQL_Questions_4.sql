@@ -213,3 +213,26 @@ from month_orders
 select month_date, monthly_sales, 
 concat(round((monthly_sales * 100 / total_sales),2),'%') as revenue_percentage
 from total_completed_sales
+
+#14. Best Customer by Month
+#Find the customer who generated the highest completed sales in each month.
+#Include all customers tied for the highest sales.
+#Output:
+#month_date | customer_name | total_sales
+
+with customer_sales as (
+select date_format(order_date, '%Y-%m') as month_date, customer_name, sum(amount) as monthly_sales
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by date_format(order_date, '%Y-%m'), c.customer_id, customer_name
+),
+customer_rank as (
+select month_date, customer_name, monthly_sales,
+rank() over (partition by month_date order by monthly_sales desc) as ranking
+from customer_sales
+)
+select month_date, customer_name, monthly_sales
+from customer_rank
+where ranking = 1
+order by month_date

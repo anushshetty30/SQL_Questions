@@ -217,8 +217,6 @@ from total_completed_sales
 #14. Best Customer by Month
 #Find the customer who generated the highest completed sales in each month.
 #Include all customers tied for the highest sales.
-#Output:
-#month_date | customer_name | total_sales
 
 with customer_sales as (
 select date_format(order_date, '%Y-%m') as month_date, customer_name, sum(amount) as monthly_sales

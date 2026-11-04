@@ -234,3 +234,18 @@ select month_date, customer_name, monthly_sales
 from customer_rank
 where ranking = 1
 order by month_date
+
+#15. Customer's First Completed Order
+#Find the first completed order for every customer.
+#Include only customers who have at least one completed order.
+
+with customer_rank as (
+select customer_name, order_id , order_date, amount,
+row_number() over (partition by c.customer_id order by order_date) as ranking
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+)
+select customer_name, order_id , order_date, amount
+from customer_rank
+where ranking = 1

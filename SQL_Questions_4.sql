@@ -249,3 +249,15 @@ where status = 'completed'
 select customer_name, order_id , order_date, amount
 from customer_rank
 where ranking = 1
+
+#16. Customers Who Never Cancelled an Order
+#Find customers who have placed at least one order but have never cancelled any order.
+
+select customer_name, count(o.order_id) as total_orders,
+count(case when status = 'completed' then o.order_id
+	  end) as completed_orders
+from customers c join orders o
+on c.customer_id= o.customer_id
+group by c.customer_id, customer_name
+having count(case when status = 'cancelled' then o.order_id
+	  end) = 0

@@ -261,3 +261,18 @@ on c.customer_id= o.customer_id
 group by c.customer_id, customer_name
 having count(case when status = 'cancelled' then o.order_id
 	  end) = 0
+
+#17. Cancellation Rate by City
+#Calculate the cancellation rate for each city.
+
+with city_orders as (
+select city, count(o.order_id) as total_orders,
+count(case when status = 'cancelled' then o.order_id
+	end) as cancelled_orders
+from customers c join orders o
+on c.customer_id = o.customer_id
+group by city
+)
+select city, total_orders, cancelled_orders,
+round((cancelled_orders * 100 / total_orders),2) as cancellation_percentage
+from city_orders

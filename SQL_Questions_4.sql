@@ -328,3 +328,18 @@ FROM customer_segments
 GROUP BY customer_segment
 ORDER BY total_segment_sales DESC;
 
+#20. Customer Retention Analysis
+#For every customer who has completed orders, calculate:
+#- First completed order date
+#- Most recent completed order date
+#- Number of completed orders
+#- Total completed sales
+#- Number of days between first and latest completed order
+
+select customer_name, min(order_date) as first_order_date, max(order_date) as latest_order_date, 
+count(o.order_id) as completed_orders, sum(amount) as total_sales,
+datediff(max(order_date), min(order_date)) as active_days
+from customers c join orders o
+on c.customer_id = o.customer_id
+where status = 'completed'
+group by c.customer_id, customer_name

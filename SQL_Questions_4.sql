@@ -276,3 +276,18 @@ group by city
 select city, total_orders, cancelled_orders,
 round((cancelled_orders * 100 / total_orders),2) as cancellation_percentage
 from city_orders
+
+#18. Orders Above Customer's Average
+#Find completed orders where the order amount is greater than that customer's average completed order amount.
+
+WITH order_analysis AS (
+    SELECT c.customer_name, o.order_id, o.amount,
+    AVG(o.amount) OVER (PARTITION BY o.customer_id) AS customer_average_order
+    FROM customers c JOIN orders o
+    ON c.customer_id = o.customer_id
+    WHERE o.status = 'Completed'
+)
+SELECT
+    customer_name, order_id, amount, customer_average_order
+FROM order_analysis
+WHERE amount > customer_average_order;

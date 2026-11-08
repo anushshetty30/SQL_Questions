@@ -291,3 +291,40 @@ SELECT
     customer_name, order_id, amount, customer_average_order
 FROM order_analysis
 WHERE amount > customer_average_order;
+
+#19. Customer Revenue Segmentation With Customer Count
+#Using these categories:
+#- High Value: ₹10,000 or more
+#- Medium Value: ₹5,000 to below ₹10,000
+#- Low Value: below ₹5,000
+#First classify every customer based on their total completed sales.
+#Then calculate how many customers belong to each segment.
+
+WITH customer_sales AS (
+    SELECT c.customer_id, c.customer_name,
+        SUM(CASE
+                    WHEN o.status = 'Completed'
+                    THEN o.amount
+                    ELSE 0
+                END) AS total_sales
+    FROM customers c LEFT JOIN orders o
+    ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id, c.customer_name
+),
+customer_segments AS (
+    SELECT customer_id, customer_name, total_sales,
+        CASE
+            WHEN total_sales >= 10000 THEN 'High Value'
+            WHEN total_sales >= 5000 THEN 'Medium Value'
+            ELSE 'Low Value'
+        END AS customer_segment
+    FROM customer_sales
+)
+SELECT
+    customer_segment,
+    COUNT(customer_id) AS customer_count,
+    SUM(total_sales) AS total_segment_sales
+FROM customer_segments
+GROUP BY customer_segment
+ORDER BY total_segment_sales DESC;
+

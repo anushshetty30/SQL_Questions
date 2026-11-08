@@ -298,7 +298,7 @@ WHERE amount > customer_average_order;
 #- Medium Value: ₹5,000 to below ₹10,000
 #- Low Value: below ₹5,000
 #First classify every customer based on their total completed sales.
-#Then calculate how many customers belong to each segment.
+#Then calculate how many customers belong to each segment. Include customers with zero completed sales.
 
 WITH customer_sales AS (
     SELECT c.customer_id, c.customer_name,
